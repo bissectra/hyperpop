@@ -28,15 +28,15 @@ function loadBindings() {
 }
 
 function preload() {
-  failSound = loadSound("fail.mp3");
+  failSound = loadSound("assets/fail.mp3");
   shotSounds = {
-    1: loadSound("shot_red.wav"),
-    2: loadSound("shot_orange.wav"),
-    3: loadSound("shot_yellow.wav"),
-    4: loadSound("shot_green.wav"),
-    5: loadSound("shot_blue.wav"),
-    6: loadSound("shot_indigo.wav"),
-    7: loadSound("shot_violet.wav"),
+    1: loadSound("assets/shot_red.wav"),
+    2: loadSound("assets/shot_orange.wav"),
+    3: loadSound("assets/shot_yellow.wav"),
+    4: loadSound("assets/shot_green.wav"),
+    5: loadSound("assets/shot_blue.wav"),
+    6: loadSound("assets/shot_indigo.wav"),
+    7: loadSound("assets/shot_violet.wav"),
   };
 }
 
