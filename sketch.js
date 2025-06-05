@@ -1,17 +1,17 @@
 let world = [];
 let stars = [];
 let model;
-let shootSound;
+let shootSounds = {};
 let score = 0; // Initialize the score
 
 const RAINBOW_COLORS = [
-  { color: [255, 0, 0], score: 1 },      // Red
-  { color: [255, 127, 0], score: 2 },    // Orange
-  { color: [255, 255, 0], score: 3 },    // Yellow
-  { color: [0, 255, 0], score: 4 },      // Green
-  { color: [0, 0, 255], score: 5 },      // Blue
-  { color: [75, 0, 130], score: 6 },     // Indigo
-  { color: [148, 0, 211], score: 7 },    // Violet
+  { color: [255, 0, 0], score: 1 }, // Red
+  { color: [255, 127, 0], score: 2 }, // Orange
+  { color: [255, 255, 0], score: 3 }, // Yellow
+  { color: [0, 255, 0], score: 4 }, // Green
+  { color: [0, 0, 255], score: 5 }, // Blue
+  { color: [75, 0, 130], score: 6 }, // Indigo
+  { color: [148, 0, 211], score: 7 }, // Violet
 ];
 
 window.bindings = Object.assign({}, PRESETS["qwerty"]); // Default bindings
@@ -24,7 +24,15 @@ function loadBindings() {
 }
 
 function preload() {
-  shootSound = loadSound("shoot.mp3"); // Load the sound file
+  shootSounds = {
+    1: loadSound("shoot_red.mp3"),
+    2: loadSound("shoot_orange.mp3"),
+    3: loadSound("shoot_yellow.mp3"),
+    4: loadSound("shoot_green.mp3"),
+    5: loadSound("shoot_blue.mp3"),
+    6: loadSound("shoot_indigo.mp3"),
+    7: loadSound("shoot_violet.mp3"),
+  };
 }
 
 function setup() {
@@ -82,10 +90,10 @@ function generateStars(count) {
   for (let i = 0; i < count; i++) {
     const dir = Array.from({ length: 4 }, () => random(-1, 1));
     const norm = Math.sqrt(dir.reduce((s, v) => s + v * v, 0));
-    const unit = dir.map(v => v / norm);
+    const unit = dir.map((v) => v / norm);
     const dist = 2000;
     stars.push({
-      center: unit.map(v => v * dist),
+      center: unit.map((v) => v * dist),
       radius: random(8, 18),
       color: [255, 255, 255], // white color
     });
@@ -112,7 +120,7 @@ function drawWorld() {
 
 function drawStars() {
   // Remove translação do modelo: só rotação
-  let rotOnly = model.map(row => row.slice());
+  let rotOnly = model.map((row) => row.slice());
   // Zera a coluna de translação
   for (let i = 0; i < 4; i++) rotOnly[i][4] = 0;
 
@@ -123,7 +131,13 @@ function drawStars() {
   });
 }
 
-function drawSphere(center, radius, color, customModel = null, material = null) {
+function drawSphere(
+  center,
+  radius,
+  color,
+  customModel = null,
+  material = null
+) {
   const mat = customModel || model;
   const [x, y, z, w] = matVecMult(mat, [...center, 1]);
   const validRadius = Math.sqrt(radius * radius - w * w);
@@ -199,7 +213,12 @@ function handleInput() {
   Object.entries(rotationMap).forEach(([rot, axes]) => {
     const key = window.bindings[rot];
     if (key && keyIsDown(getKeyCode(key))) {
-      const r = rotationAboutPoint([0, 0, 0, 0], axes[0], axes[1], rotationSpeed);
+      const r = rotationAboutPoint(
+        [0, 0, 0, 0],
+        axes[0],
+        axes[1],
+        rotationSpeed
+      );
       model = matMatMult(r, model);
     }
   });
@@ -207,10 +226,10 @@ function handleInput() {
 
 // ——— Shooting Logic ———
 function shoot() {
-  if (isSettingsOpen()) return; // Ignore shooting if settings are open
-  shootSound.play();
+  if (isSettingsOpen()) return;
   let hits = 0;
   let gained = 0;
+  let lastScore = null;
 
   world = world.filter(({ center, radius, score: sphereScore }) => {
     const [x, y, z, w] = matVecMult(model, [...center, 1]);
@@ -222,6 +241,7 @@ function shoot() {
     if (dist <= d) {
       hits++;
       gained += sphereScore || 1;
+      lastScore = sphereScore || 1;
       return false;
     }
     return true;
@@ -230,6 +250,9 @@ function shoot() {
   if (hits > 0) {
     score += gained;
     updateScore();
+    if (lastScore && shootSounds[lastScore]) {
+      shootSounds[lastScore].play();
+    }
   }
 }
 
