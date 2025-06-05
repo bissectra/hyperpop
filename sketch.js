@@ -1,8 +1,12 @@
-let world = [];
 let stars = [];
 let model;
 let shootSounds = {};
 let score = 0; // Initialize the score
+
+const CHUNK_SIZE = 100;
+const CHUNK_RADIUS = 2; // Load chunks within this radius in 4D
+const loadedChunks = new Set(); // Set to track loaded chunks
+let chunkContents = {}; // key → list of objects
 
 const RAINBOW_COLORS = [
   { color: [255, 0, 0], score: 1 }, // Red
@@ -43,7 +47,6 @@ function setup() {
 
   noStroke();
   model = identityMatrix(5);
-  generateWorldChunked(2);
   generateStars(1000);
 
   // Initialize the score display
@@ -56,6 +59,7 @@ function setup() {
 function draw() {
   background(16, 20, 40);
   handleInput();
+  updateChunks();
   setupLighting();
   drawStars();
   drawWorld();
@@ -79,48 +83,87 @@ function keyPressed() {
 }
 
 // ——— World Management ———
-function generateWorldChunked(chunkCountPerAxis = 3) {
-  world = [];
-  const chunkSize = 100; // Each chunk is [100]^4 in size
-  const halfExtent = (chunkCountPerAxis * chunkSize) / 2;
+function getChunkKey(i, j, k, l) {
+  return `${i},${j},${k},${l}`;
+}
 
-  for (let i = -chunkCountPerAxis; i < chunkCountPerAxis; i++) {
-    for (let j = -chunkCountPerAxis; j < chunkCountPerAxis; j++) {
-      for (let k = -chunkCountPerAxis; k < chunkCountPerAxis; k++) {
-        for (let l = -chunkCountPerAxis; l < chunkCountPerAxis; l++) {
-          const chunkOrigin = [
-            i * chunkSize,
-            j * chunkSize,
-            k * chunkSize,
-            l * chunkSize,
-          ];
+function loadChunk(i, j, k, l) {
+  const key = getChunkKey(i, j, k, l);
+  if (loadedChunks.has(key)) return;
 
-          // Number of spheres for this chunk (clamped to non-negative)
-          const sphereCount = Math.max(0, Math.round(randomGaussian(10, 5)));
+  loadedChunks.add(key);
 
-          for (let n = 0; n < sphereCount; n++) {
-            const localPos = [
-              random(0, chunkSize),
-              random(0, chunkSize),
-              random(0, chunkSize),
-              random(0, chunkSize),
-            ];
-            const center = chunkOrigin.map((base, idx) => base + localPos[idx]);
+  const chunkOrigin = [
+    i * CHUNK_SIZE,
+    j * CHUNK_SIZE,
+    k * CHUNK_SIZE,
+    l * CHUNK_SIZE,
+  ];
+  const sphereCount = Math.max(0, Math.round(randomGaussian(10, 5)));
+  const chunkObjects = [];
 
-            const idxColor = Math.floor(random(0, RAINBOW_COLORS.length));
-            const { color, score } = RAINBOW_COLORS[idxColor];
+  for (let n = 0; n < sphereCount; n++) {
+    const localPos = [
+      random(0, CHUNK_SIZE),
+      random(0, CHUNK_SIZE),
+      random(0, CHUNK_SIZE),
+      random(0, CHUNK_SIZE),
+    ];
+    const center = chunkOrigin.map((base, idx) => base + localPos[idx]);
 
-            world.push({
-              center,
-              radius: 10,
-              color,
-              score,
-            });
-          }
+    const idxColor = Math.floor(random(0, RAINBOW_COLORS.length));
+    const { color, score } = RAINBOW_COLORS[idxColor];
+
+    chunkObjects.push({
+      center,
+      radius: 10,
+      color,
+      score,
+      chunk: key,
+    });
+  }
+
+  chunkContents[key] = chunkObjects;
+}
+
+function getCamera4DPosition() {
+  // Extract inverse translation from the model matrix
+  // Assuming model is an affine transform matrix: column 4 is position
+  const invModel = math.inv(model);
+  const [x, y, z, w] = matVecMult(invModel, [0, 0, 0, 0, 1]); // origin in model space
+  return [x, y, z, w];
+}
+
+function updateChunks() {
+  const pos = getCamera4DPosition(); // returns [x, y, z, w] from the model matrix
+  const chunkCoords = pos.map((p) => Math.floor(p / CHUNK_SIZE));
+
+  let newWorld = [];
+  let activeChunks = new Set();
+
+  for (let di = -CHUNK_RADIUS; di <= CHUNK_RADIUS; di++) {
+    for (let dj = -CHUNK_RADIUS; dj <= CHUNK_RADIUS; dj++) {
+      for (let dk = -CHUNK_RADIUS; dk <= CHUNK_RADIUS; dk++) {
+        for (let dl = -CHUNK_RADIUS; dl <= CHUNK_RADIUS; dl++) {
+          const ci = chunkCoords[0] + di;
+          const cj = chunkCoords[1] + dj;
+          const ck = chunkCoords[2] + dk;
+          const cl = chunkCoords[3] + dl;
+
+          const key = getChunkKey(ci, cj, ck, cl);
+          activeChunks.add(key);
+          loadChunk(ci, cj, ck, cl);
         }
       }
     }
   }
+
+  // Unload spheres not in active chunks, and remove from loadedChunks
+  loadedChunks.forEach((key) => {
+    if (!activeChunks.has(key)) {
+      loadedChunks.delete(key);
+    }
+  });
 }
 
 function generateStars(count) {
@@ -138,22 +181,30 @@ function generateStars(count) {
   }
 }
 
-function randomSphere() {
-  const idx = Math.floor(random(0, RAINBOW_COLORS.length));
-  const { color, score } = RAINBOW_COLORS[idx];
-  return {
-    center: Array.from({ length: 4 }, () => random(-100, 100)),
-    radius: 10,
-    color,
-    score,
-  };
-}
-
 // ——— Drawing Functions ———
 function drawWorld() {
-  world.forEach(({ center, radius, color }) => {
-    drawSphere(center, radius, color);
-  });
+  const pos = getCamera4DPosition();
+  const chunkCoords = pos.map((p) => Math.floor(p / CHUNK_SIZE));
+  const DRAW_RADIUS = CHUNK_RADIUS + 1;
+
+  for (let di = -DRAW_RADIUS; di <= DRAW_RADIUS; di++) {
+    for (let dj = -DRAW_RADIUS; dj <= DRAW_RADIUS; dj++) {
+      for (let dk = -DRAW_RADIUS; dk <= DRAW_RADIUS; dk++) {
+        for (let dl = -DRAW_RADIUS; dl <= DRAW_RADIUS; dl++) {
+          const ci = chunkCoords[0] + di;
+          const cj = chunkCoords[1] + dj;
+          const ck = chunkCoords[2] + dk;
+          const cl = chunkCoords[3] + dl;
+          const key = getChunkKey(ci, cj, ck, cl);
+          if (chunkContents[key]) {
+            chunkContents[key].forEach(({ center, radius, color }) => {
+              drawSphere(center, radius, color);
+            });
+          }
+        }
+      }
+    }
+  }
 }
 
 function drawStars() {
@@ -269,21 +320,41 @@ function shoot() {
   let gained = 0;
   let lastScore = null;
 
-  world = world.filter(({ center, radius, score: sphereScore }) => {
-    const [x, y, z, w] = matVecMult(model, [...center, 1]);
-    const d = Math.sqrt(radius * radius - w * w);
-    const visible = !isNaN(d) && d >= 0;
+  const pos = getCamera4DPosition();
+  const chunkCoords = pos.map((p) => Math.floor(p / CHUNK_SIZE));
+  const SHOOT_RADIUS = CHUNK_RADIUS + 1;
 
-    if (!visible) return true;
-    const dist = Math.sqrt(x * x + y * y);
-    if (dist <= d) {
-      hits++;
-      gained += sphereScore || 1;
-      lastScore = sphereScore || 1;
-      return false;
+  for (let di = -SHOOT_RADIUS; di <= SHOOT_RADIUS; di++) {
+    for (let dj = -SHOOT_RADIUS; dj <= SHOOT_RADIUS; dj++) {
+      for (let dk = -SHOOT_RADIUS; dk <= SHOOT_RADIUS; dk++) {
+        for (let dl = -SHOOT_RADIUS; dl <= SHOOT_RADIUS; dl++) {
+          const ci = chunkCoords[0] + di;
+          const cj = chunkCoords[1] + dj;
+          const ck = chunkCoords[2] + dk;
+          const cl = chunkCoords[3] + dl;
+          const key = getChunkKey(ci, cj, ck, cl);
+          if (!chunkContents[key]) continue;
+          // Remove spheres hit by the shot
+          chunkContents[key] = chunkContents[key].filter(
+            ({ center, radius, score: sphereScore }) => {
+              const [x, y, z, w] = matVecMult(model, [...center, 1]);
+              const d = Math.sqrt(radius * radius - w * w);
+              const visible = !isNaN(d) && d >= 0;
+              if (!visible) return true;
+              const dist = Math.sqrt(x * x + y * y);
+              if (dist <= d) {
+                hits++;
+                gained += sphereScore || 1;
+                lastScore = sphereScore || 1;
+                return false;
+              }
+              return true;
+            }
+          );
+        }
+      }
     }
-    return true;
-  });
+  }
 
   if (hits > 0) {
     score += gained;
