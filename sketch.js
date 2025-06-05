@@ -25,13 +25,13 @@ function loadBindings() {
 
 function preload() {
   shootSounds = {
-    1: loadSound("shoot_red.mp3"),
-    2: loadSound("shoot_orange.mp3"),
-    3: loadSound("shoot_yellow.mp3"),
-    4: loadSound("shoot_green.mp3"),
-    5: loadSound("shoot_blue.mp3"),
-    6: loadSound("shoot_indigo.mp3"),
-    7: loadSound("shoot_violet.mp3"),
+    1: loadSound("shot_red.wav"),
+    2: loadSound("shot_orange.wav"),
+    3: loadSound("shot_yellow.wav"),
+    4: loadSound("shot_green.wav"),
+    5: loadSound("shot_blue.wav"),
+    6: loadSound("shot_indigo.wav"),
+    7: loadSound("shot_violet.wav"),
   };
 }
 
