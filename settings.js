@@ -124,13 +124,6 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// Escape key closes panel
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !settingsPanel.classList.contains("hidden")) {
-    toggleSettings(false);
-  }
-});
-
 setupBindingInputs();
 
 function applyPreset(preset) {
