@@ -3,7 +3,7 @@ let model;
 let shootSounds = {};
 let score = 0; // Initialize the score
 
-const CHUNK_SIZE = 200;
+const CHUNK_SIZE = 600;
 const CHUNK_RADIUS = 2; // Load chunks within this radius in 4D
 let chunkContents = {}; // key → list of objects
 
@@ -116,7 +116,7 @@ function loadChunk(i, j, k, l) {
 
     chunkObjects.push({
       center,
-      radius: 10,
+      radius: 15,
       color,
       score,
       chunk: key,
@@ -271,8 +271,8 @@ function isSettingsOpen() {
 function handleInput() {
   if (isSettingsOpen()) return; // Ignore input if settings are open
 
-  const step = 1;
-  const rotationSpeed = 0.005;
+  const step = 1.5;
+  const rotationSpeed = 0.008;
 
   // translation keys usando bindings
   const translationMap = {
