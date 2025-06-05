@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- ensure proper viewport sizing on Safari/mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+    <title>4D Game</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- p5.js core + sound addon -->
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.5/lib/p5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.5/lib/addons/p5.sound.min.js"></script>
+  </head>
+  <body>
+    <div id="info-container">
+      <h1>4D Game</h1>
+      <p>Use the following keys to interact:</p>
+      <ul>
+        <li><strong>Y/H/U/J/I/K/O/L</strong>: Translate the world</li>
+        <li><strong>Q/W/E/A/S/D</strong>: Rotate the world</li>
+        <li><strong>Space</strong>: Shoot</li>
+      </ul>
+    </div>
+    <div id="score-container">
+      <h2>Score: <span id="score">0</span></h2>
+    </div>
+
+    <!-- your game logic -->
+    <script src="sketch.js"></script>
+    <script src="math.js"></script>
+  </body>
+</html>
