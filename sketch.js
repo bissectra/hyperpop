@@ -3,9 +3,8 @@ let model;
 let shootSounds = {};
 let score = 0; // Initialize the score
 
-const CHUNK_SIZE = 100;
+const CHUNK_SIZE = 200;
 const CHUNK_RADIUS = 2; // Load chunks within this radius in 4D
-const loadedChunks = new Set(); // Set to track loaded chunks
 let chunkContents = {}; // key → list of objects
 
 const RAINBOW_COLORS = [
@@ -89,9 +88,10 @@ function getChunkKey(i, j, k, l) {
 
 function loadChunk(i, j, k, l) {
   const key = getChunkKey(i, j, k, l);
-  if (loadedChunks.has(key)) return;
-
-  loadedChunks.add(key);
+  if (chunkContents[key]) {
+    // Already loaded
+    return;
+  }
 
   const chunkOrigin = [
     i * CHUNK_SIZE,
@@ -138,9 +138,6 @@ function updateChunks() {
   const pos = getCamera4DPosition(); // returns [x, y, z, w] from the model matrix
   const chunkCoords = pos.map((p) => Math.floor(p / CHUNK_SIZE));
 
-  let newWorld = [];
-  let activeChunks = new Set();
-
   for (let di = -CHUNK_RADIUS; di <= CHUNK_RADIUS; di++) {
     for (let dj = -CHUNK_RADIUS; dj <= CHUNK_RADIUS; dj++) {
       for (let dk = -CHUNK_RADIUS; dk <= CHUNK_RADIUS; dk++) {
@@ -150,20 +147,11 @@ function updateChunks() {
           const ck = chunkCoords[2] + dk;
           const cl = chunkCoords[3] + dl;
 
-          const key = getChunkKey(ci, cj, ck, cl);
-          activeChunks.add(key);
           loadChunk(ci, cj, ck, cl);
         }
       }
     }
   }
-
-  // Unload spheres not in active chunks, and remove from loadedChunks
-  loadedChunks.forEach((key) => {
-    if (!activeChunks.has(key)) {
-      loadedChunks.delete(key);
-    }
-  });
 }
 
 function generateStars(count) {
