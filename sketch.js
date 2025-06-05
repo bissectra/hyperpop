@@ -134,6 +134,21 @@ function getCamera4DPosition() {
   return [x, y, z, w];
 }
 
+function unloadFarChunks(cameraCoords, maxDistance = CHUNK_RADIUS + 3) {
+  for (const key in chunkContents) {
+    const [i, j, k, l] = key.split(',').map(Number);
+    const dist = Math.max(
+      Math.abs(i - cameraCoords[0]),
+      Math.abs(j - cameraCoords[1]),
+      Math.abs(k - cameraCoords[2]),
+      Math.abs(l - cameraCoords[3])
+    );
+    if (dist > maxDistance) {
+      delete chunkContents[key];
+    }
+  }
+}
+
 function updateChunks() {
   const pos = getCamera4DPosition(); // returns [x, y, z, w] from the model matrix
   const chunkCoords = pos.map((p) => Math.floor(p / CHUNK_SIZE));
@@ -152,6 +167,8 @@ function updateChunks() {
       }
     }
   }
+
+  unloadFarChunks(chunkCoords);
 }
 
 function generateStars(count) {
