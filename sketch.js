@@ -43,7 +43,7 @@ function setup() {
 
   noStroke();
   model = identityMatrix(5);
-  generateWorld(100);
+  generateWorldChunked(2);
   generateStars(1000);
 
   // Initialize the score display
@@ -79,9 +79,47 @@ function keyPressed() {
 }
 
 // ——— World Management ———
-function generateWorld(count) {
-  for (let i = 0; i < count; i++) {
-    world.push(randomSphere());
+function generateWorldChunked(chunkCountPerAxis = 3) {
+  world = [];
+  const chunkSize = 100; // Each chunk is [100]^4 in size
+  const halfExtent = (chunkCountPerAxis * chunkSize) / 2;
+
+  for (let i = -chunkCountPerAxis; i < chunkCountPerAxis; i++) {
+    for (let j = -chunkCountPerAxis; j < chunkCountPerAxis; j++) {
+      for (let k = -chunkCountPerAxis; k < chunkCountPerAxis; k++) {
+        for (let l = -chunkCountPerAxis; l < chunkCountPerAxis; l++) {
+          const chunkOrigin = [
+            i * chunkSize,
+            j * chunkSize,
+            k * chunkSize,
+            l * chunkSize,
+          ];
+
+          // Number of spheres for this chunk (clamped to non-negative)
+          const sphereCount = Math.max(0, Math.round(randomGaussian(10, 5)));
+
+          for (let n = 0; n < sphereCount; n++) {
+            const localPos = [
+              random(0, chunkSize),
+              random(0, chunkSize),
+              random(0, chunkSize),
+              random(0, chunkSize),
+            ];
+            const center = chunkOrigin.map((base, idx) => base + localPos[idx]);
+
+            const idxColor = Math.floor(random(0, RAINBOW_COLORS.length));
+            const { color, score } = RAINBOW_COLORS[idxColor];
+
+            world.push({
+              center,
+              radius: 10,
+              color,
+              score,
+            });
+          }
+        }
+      }
+    }
   }
 }
 
