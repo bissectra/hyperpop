@@ -4,6 +4,16 @@ let model;
 let shootSound;
 let score = 0; // Initialize the score
 
+const RAINBOW_COLORS = [
+  { color: [255, 0, 0], score: 1 },      // Red
+  { color: [255, 127, 0], score: 2 },    // Orange
+  { color: [255, 255, 0], score: 3 },    // Yellow
+  { color: [0, 255, 0], score: 4 },      // Green
+  { color: [0, 0, 255], score: 5 },      // Blue
+  { color: [75, 0, 130], score: 6 },     // Indigo
+  { color: [148, 0, 211], score: 7 },    // Violet
+];
+
 window.bindings = Object.assign({}, PRESETS["qwerty"]); // Default bindings
 
 function loadBindings() {
@@ -36,7 +46,7 @@ function setup() {
 }
 
 function draw() {
-  background(20, 20, 40); // Céu escuro
+  background(16, 20, 40);
   handleInput();
   setupLighting();
   drawStars();
@@ -83,15 +93,13 @@ function generateStars(count) {
 }
 
 function randomSphere() {
-  const colorRange = [128, 196];
+  const idx = Math.floor(random(0, RAINBOW_COLORS.length));
+  const { color, score } = RAINBOW_COLORS[idx];
   return {
     center: Array.from({ length: 4 }, () => random(-100, 100)),
     radius: 10,
-    color: [
-      random(colorRange[0], colorRange[1]),
-      random(colorRange[0], colorRange[1]),
-      random(colorRange[0], colorRange[1]),
-    ],
+    color,
+    score,
   };
 }
 
@@ -191,8 +199,7 @@ function handleInput() {
   Object.entries(rotationMap).forEach(([rot, axes]) => {
     const key = window.bindings[rot];
     if (key && keyIsDown(getKeyCode(key))) {
-      const angle = keyIsDown(SHIFT) ? -rotationSpeed : rotationSpeed;
-      const r = rotationAboutPoint([0, 0, 0, 0], axes[0], axes[1], angle);
+      const r = rotationAboutPoint([0, 0, 0, 0], axes[0], axes[1], rotationSpeed);
       model = matMatMult(r, model);
     }
   });
@@ -203,8 +210,9 @@ function shoot() {
   if (isSettingsOpen()) return; // Ignore shooting if settings are open
   shootSound.play();
   let hits = 0;
+  let gained = 0;
 
-  world = world.filter(({ center, radius }) => {
+  world = world.filter(({ center, radius, score: sphereScore }) => {
     const [x, y, z, w] = matVecMult(model, [...center, 1]);
     const d = Math.sqrt(radius * radius - w * w);
     const visible = !isNaN(d) && d >= 0;
@@ -213,13 +221,14 @@ function shoot() {
     const dist = Math.sqrt(x * x + y * y);
     if (dist <= d) {
       hits++;
+      gained += sphereScore || 1;
       return false;
     }
     return true;
   });
 
   if (hits > 0) {
-    score += hits;
+    score += gained;
     updateScore();
   }
 }
