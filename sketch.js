@@ -1,4 +1,5 @@
 let world = [];
+let stars = [];
 let model;
 let shootSound;
 let score = 0; // Initialize the score
@@ -25,6 +26,7 @@ function setup() {
   noStroke();
   model = identityMatrix(5);
   generateWorld(100);
+  generateStars(1000);
 
   // Initialize the score display
   updateScore();
@@ -34,9 +36,10 @@ function setup() {
 }
 
 function draw() {
-  background(220);
+  background(20, 20, 40); // Céu escuro
   handleInput();
   setupLighting();
+  drawStars();
   drawWorld();
   drawTarget();
 }
@@ -64,11 +67,31 @@ function generateWorld(count) {
   }
 }
 
+function generateStars(count) {
+  stars = [];
+  for (let i = 0; i < count; i++) {
+    const dir = Array.from({ length: 4 }, () => random(-1, 1));
+    const norm = Math.sqrt(dir.reduce((s, v) => s + v * v, 0));
+    const unit = dir.map(v => v / norm);
+    const dist = 2000;
+    stars.push({
+      center: unit.map(v => v * dist),
+      radius: random(8, 18),
+      color: [255, 255, 255], // white color
+    });
+  }
+}
+
 function randomSphere() {
+  const colorRange = [128, 196];
   return {
     center: Array.from({ length: 4 }, () => random(-100, 100)),
     radius: 10,
-    color: [random(0, 200), random(0, 200), random(100, 255)],
+    color: [
+      random(colorRange[0], colorRange[1]),
+      random(colorRange[0], colorRange[1]),
+      random(colorRange[0], colorRange[1]),
+    ],
   };
 }
 
@@ -79,14 +102,32 @@ function drawWorld() {
   });
 }
 
-function drawSphere(center, radius, color, transform = true) {
-  const [x, y, z, w] = transform ? matVecMult(model, [...center, 1]) : center;
+function drawStars() {
+  // Remove translação do modelo: só rotação
+  let rotOnly = model.map(row => row.slice());
+  // Zera a coluna de translação
+  for (let i = 0; i < 4; i++) rotOnly[i][4] = 0;
+
+  stars.forEach(({ center, radius, color }) => {
+    drawSphere(center, radius, color, rotOnly, () => {
+      emissiveMaterial(...color);
+    });
+  });
+}
+
+function drawSphere(center, radius, color, customModel = null, material = null) {
+  const mat = customModel || model;
+  const [x, y, z, w] = matVecMult(mat, [...center, 1]);
   const validRadius = Math.sqrt(radius * radius - w * w);
 
   if (!isNaN(validRadius) && validRadius >= 0) {
     push();
     translate(x, y, z);
-    ambientMaterial(...color);
+    if (material) {
+      material();
+    } else if (color) {
+      ambientMaterial(...color);
+    }
     sphere(validRadius);
     pop();
   }
@@ -114,8 +155,8 @@ function isSettingsOpen() {
 function handleInput() {
   if (isSettingsOpen()) return; // Ignore input if settings are open
 
-  const step = 3;
-  const rotationSpeed = 0.02;
+  const step = 1;
+  const rotationSpeed = 0.005;
 
   // translation keys usando bindings
   const translationMap = {
