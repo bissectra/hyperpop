@@ -3,6 +3,15 @@ let model;
 let shootSound;
 let score = 0; // Initialize the score
 
+window.bindings = Object.assign({}, PRESETS["qwerty"]); // Default bindings
+
+function loadBindings() {
+  for (let key in window.bindings) {
+    const input = document.getElementById(`key-${key}`);
+    if (input) input.value = window.bindings[key];
+  }
+}
+
 function preload() {
   shootSound = loadSound("shoot.mp3"); // Load the sound file
 }
@@ -19,6 +28,9 @@ function setup() {
 
   // Initialize the score display
   updateScore();
+
+  // Load key bindings from the settings
+  loadBindings();
 }
 
 function draw() {
@@ -35,7 +47,14 @@ function windowResized() {
 }
 
 function keyPressed() {
-  if (key === " ") shoot();
+  // handle shooting
+  const shootBinding = getKeyCode(window.bindings.shoot);
+  const pressedKey = getKeyCode(key);
+  console.log(`Key pressed: ${key} (code: ${pressedKey})`);
+  console.log(`Shoot binding: ${shootBinding}`);
+  if (pressedKey === shootBinding) {
+    shoot();
+  }
 }
 
 // ——— World Management ———
@@ -86,58 +105,61 @@ function drawTarget() {
   pop();
 }
 
+function isSettingsOpen() {
+  const settingsPanel = document.getElementById("settings-panel");
+  return !settingsPanel.classList.contains("hidden");
+}
+
 // ——— Input Handling ———
 function handleInput() {
+  if (isSettingsOpen()) return; // Ignore input if settings are open
+
   const step = 3;
   const rotationSpeed = 0.02;
 
-  // translation keys
-  ["Y", "H", "U", "J", "I", "K", "O", "L"].forEach((k) => {
-    if (keyIsDown(k.charCodeAt(0))) {
-      handleTranslation(k, step);
+  // translation keys usando bindings
+  const translationMap = {
+    left: [step, 0, 0, 0],
+    right: [-step, 0, 0, 0],
+    forward: [0, step, 0, 0],
+    backward: [0, -step, 0, 0],
+    up: [0, 0, step, 0],
+    down: [0, 0, -step, 0],
+    ana: [0, 0, 0, step],
+    kata: [0, 0, 0, -step],
+  };
+
+  Object.entries(translationMap).forEach(([dir, vec]) => {
+    const key = window.bindings[dir];
+    if (key && keyIsDown(getKeyCode(key))) {
+      const t = translationMatrix(...vec);
+      model = matMatMult(t, model);
     }
   });
 
-  // rotation keys
-  ["Q", "W", "E", "A", "S", "D"].forEach((k) => {
-    if (keyIsDown(k.charCodeAt(0))) {
-      handleRotation(k, rotationSpeed);
+  // rotation keys usando bindings
+  const rotationMap = {
+    rotateXY: [0, 1],
+    rotateXZ: [0, 2],
+    rotateYZ: [1, 2],
+    rotateXW: [0, 3],
+    rotateYW: [1, 3],
+    rotateZW: [2, 3],
+  };
+
+  Object.entries(rotationMap).forEach(([rot, axes]) => {
+    const key = window.bindings[rot];
+    if (key && keyIsDown(getKeyCode(key))) {
+      const angle = keyIsDown(SHIFT) ? -rotationSpeed : rotationSpeed;
+      const r = rotationAboutPoint([0, 0, 0, 0], axes[0], axes[1], angle);
+      model = matMatMult(r, model);
     }
   });
-}
-
-function handleTranslation(key, step) {
-  const map = {
-    Y: [step, 0, 0, 0],
-    H: [-step, 0, 0, 0],
-    U: [0, step, 0, 0],
-    J: [0, -step, 0, 0],
-    I: [0, 0, step, 0],
-    K: [0, 0, -step, 0],
-    O: [0, 0, 0, step],
-    L: [0, 0, 0, -step],
-  };
-  const t = translationMatrix(...map[key]);
-  model = matMatMult(t, model);
-}
-
-function handleRotation(key, speed) {
-  const angle = keyIsDown(SHIFT) ? -speed : speed;
-  const map = {
-    Q: [0, 1],
-    W: [0, 2],
-    E: [1, 2],
-    A: [0, 3],
-    S: [1, 3],
-    D: [2, 3],
-  };
-  const [i, j] = map[key];
-  const r = rotationAboutPoint([0, 0, 0, 0], i, j, angle);
-  model = matMatMult(r, model);
 }
 
 // ——— Shooting Logic ———
 function shoot() {
+  if (isSettingsOpen()) return; // Ignore shooting if settings are open
   shootSound.play();
   let hits = 0;
 

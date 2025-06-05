@@ -1,60 +1,386 @@
-/* reset & base */
-html, body {
+/* Reset & base */
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden; /* Prevent scrolling */
+  overflow: hidden;
   font-family: Arial, sans-serif;
-  touch-action: none; /* Disable double-tap zoom, pan on iOS */
+  /* no background color so canvas is visible */
+  touch-action: none;
 }
 
-/* full-screen canvas */
+/* Fullscreen canvas behind UI */
 canvas {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  display: block;
+  z-index: 0;
 }
 
-/* info panel */
-#info-container {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  padding: 15px;
-  border-radius: 8px;
-  font-size: 1rem;
+/* Container for all UI */
+#ui-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  /* allow clicks to pass where no UI */
   z-index: 10;
 }
-#info-container h1 { font-size: 1.5rem; margin-bottom: 10px; }
-#info-container p { margin-bottom: 10px; }
-#info-container ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-#info-container ul li { margin: 5px 0; }
 
-/* score panel */
-#score-container {
+/* Make direct children interactive */
+#ui-container>* {
+  pointer-events: auto;
+}
+
+/* Centered Title */
+#title-container {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 1.2rem;
-  z-index: 10;
-}
-#score-container h2 {
-  margin: 0;
-  font-size: 1.5rem;
-}
-#score-container span {
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 2rem;
   font-weight: bold;
-  color: #ffcc00;
+  text-shadow: 0 0 5px #000;
+  user-select: none;
+  z-index: 11;
+}
+
+/* Controls & Score group container */
+#ui-controls {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 10px;
+  z-index: 11;
+}
+
+/* Buttons inside controls */
+#ui-controls button {
+  background: rgba(0, 123, 255, 0.8);
+  color: white;
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 0.5em;
+  border: 1px solid rgba(0, 123, 255, 1);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.5);
+  text-align: center;
+}
+
+#ui-controls button:hover {
+  background: rgba(0, 123, 255, 1);
+  box-shadow: 0 6px 16px rgba(0, 123, 255, 0.8);
+}
+
+#ui-controls button:active {
+  transform: scale(0.95);
+  box-shadow: 0 3px 6px rgba(0, 86, 179, 0.5);
+  transition: none;
+}
+
+/* Settings panel (modal) */
+#settings-panel {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border: 1px solid #ccc;
+  padding: 1.5em 2em;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  max-width: 90vw;
+  max-height: 70vh;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+/* Hidden helper */
+.hidden {
+  display: none;
+}
+
+/* Sections in settings */
+.section {
+  margin-bottom: 1.2em;
+}
+.key-grid {
+  display: grid;
+  gap: 0.5em;
+  justify-content: center;
+  grid-auto-flow: row;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+}
+
+.translation-grid {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.rotation-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.action-grid {
+  justify-content: center;
+  grid-template-columns: 1fr;
+}
+
+.keybind {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.75em;
+  gap: 0.25em;
+}
+
+.keybind input {
+  padding: 0.4em;
+  font-family: monospace;
+  font-size: 0.9em;
+  width: 100%;
+  max-width: 60px;
+  text-align: center;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+}
+
+.spacer {
+  width: 100%;
+  height: 1px;
+  visibility: hidden;
+}
+
+#settings-panel input {
+  padding: 0.5em;
+  font-family: monospace;
+  font-size: 1em;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  outline-offset: 2px;
+  transition: border-color 0.2s ease;
+}
+
+#settings-panel input:focus {
+  border-color: #007bff;
+}
+
+#settings-panel label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85em;
+  color: #333;
+}
+
+#settings-panel label span {
+  margin-bottom: 4px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Lighter (softer) blue button - first child */
+#ui-controls button:nth-child(1) {
+  background: #80b3ff;
+  /* Soft sky blue */
+  border-color: #6699ff;
+  box-shadow: 0 4px 10px rgba(128, 179, 255, 0.6);
+}
+
+#ui-controls button:nth-child(1):hover {
+  background: #99c2ff;
+  box-shadow: 0 6px 16px rgba(153, 194, 255, 0.8);
+}
+
+/* Stronger (darker) blue button - second child */
+#ui-controls button:nth-child(2) {
+  background: #0056b3;
+  /* Strong royal blue */
+  border-color: #004494;
+  box-shadow: 0 4px 10px rgba(0, 86, 179, 0.6);
+  color: white;
+}
+
+#ui-controls button:nth-child(2):hover {
+  background: #003f7f;
+  box-shadow: 0 6px 16px rgba(0, 63, 127, 0.8);
+}
+
+#close-settings {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  padding: 0.25em;
+  line-height: 1;
+  z-index: 1001;
+  transition: color 0.2s ease;
+}
+
+#close-settings:hover {
+  color: #007bff;
+}
+
+.top-row, .middle-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1em;
+}
+
+.key-group {
+  display: flex;
+  gap: 0.8em;
+}
+
+.keybind {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.8rem;
+  min-width: 3.2em;
+}
+
+.keybind label {
+  margin-bottom: 0.25em;
+  color: #555;
+  user-select: none;
+}
+
+.keybind input {
+  padding: 0.4em;
+  font-family: monospace;
+  font-size: 1rem;
+  width: 3.2em;
+  text-align: center;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  outline-offset: 2px;
+  transition: border-color 0.2s ease;
+}
+
+.keybind input:focus {
+  border-color: #007bff;
+}
+
+.bottom-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5em;
+}
+
+.keybind.shoot {
+  min-width: 7em;
+}
+
+.translation-container {
+  display: flex;
+  justify-content: center;
+  gap: 4em;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.translation-left-block,
+.translation-right-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Top rows: just one key each, centered */
+.translation-left-top-row,
+.translation-right-top-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.5em;
+}
+
+.translation-left-top-row .keybind,
+.translation-right-top-row .keybind {
+  min-width: 3em;
+  text-align: center;
+}
+
+/* Bottom rows: 3 keys spaced evenly */
+.translation-left-bottom-row,
+.translation-right-bottom-row {
+  display: flex;
+  gap: 0.7em;
+  justify-content: center;
+  width: 100%;
+}
+
+.keybind {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 3em;
+  font-size: 0.8rem;
+}
+
+.keybind label {
+  margin-bottom: 0.2em;
+  color: #555;
+  user-select: none;
+}
+
+.keybind input {
+  padding: 0.4em;
+  font-family: monospace;
+  font-size: 1rem;
+  width: 3em;
+  text-align: center;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  outline-offset: 2px;
+  transition: border-color 0.2s ease;
+}
+
+.keybind input:focus {
+  border-color: #007bff;
+}
+
+#preset-section {
+  text-align: center;
+  margin-bottom: 1.5em;
+}
+
+#preset-section button {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ccc;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.4em;
+  padding: 0.4em 1em;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin: 0 0.5em;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+#preset-section button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+#preset-section button:active {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(0.97);
 }

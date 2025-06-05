@@ -1,34 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <!-- ensure proper viewport sizing on Safari/mobile -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-    <title>4D Game</title>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Hyperpop!</title>
 
-    <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css" />
 
-    <!-- p5.js core + sound addon -->
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.5/lib/p5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.5/lib/addons/p5.sound.min.js"></script>
-  </head>
-  <body>
-    <div id="info-container">
-      <h1>4D Game</h1>
-      <p>Use the following keys to interact:</p>
-      <ul>
-        <li><strong>Y/H/U/J/I/K/O/L</strong>: Translate the world</li>
-        <li><strong>Q/W/E/A/S/D</strong>: Rotate the world</li>
-        <li><strong>Space</strong>: Shoot</li>
-      </ul>
-    </div>
-    <div id="score-container">
-      <h2>Score: <span id="score">0</span></h2>
+  <!-- p5.js core + sound addon -->
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.5/lib/p5.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.5/lib/addons/p5.sound.min.js"></script>
+</head>
+
+<body>
+  <canvas></canvas>
+
+  <div id="ui-container">
+
+    <div id="ui-controls">
+      <button id="score-container">Score: <span id="score">0</span></button>
+      <button id="settings-btn">Controls</button>
     </div>
 
-    <!-- your game logic -->
-    <script src="sketch.js"></script>
-    <script src="math.js"></script>
-  </body>
+    <div id="title-container">
+      <h1>Hyperpop!</h1>
+    </div>
+
+    <div id="settings-panel" class="hidden">
+
+      <div class="section" id="preset-section">
+        <button id="preset-qwerty" type="button">QWERTY Layout</button>
+        <button id="preset-azerty" type="button">AZERTY Layout</button>
+      </div>
+
+      <h3>Key Bindings</h3>
+
+      <div class="section">
+        <h4>Rotation</h4>
+        <div class="top-row">
+          <div class="key-group">
+            <div class="keybind"><label for="key-rotateXY">XY</label><input id="key-rotateXY" /></div>
+            <div class="keybind"><label for="key-rotateXZ">XZ</label><input id="key-rotateXZ" /></div>
+            <div class="keybind"><label for="key-rotateYZ">YZ</label><input id="key-rotateYZ" /></div>
+          </div>
+          <div class="key-group">
+            <div class="keybind"><label for="key-rotateXW">XW</label><input id="key-rotateXW" /></div>
+            <div class="keybind"><label for="key-rotateYW">YW</label><input id="key-rotateYW" /></div>
+            <div class="keybind"><label for="key-rotateZW">ZW</label><input id="key-rotateZW" /></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h4>Translation</h4>
+        <div class="translation-container">
+          <div class="translation-left-block">
+            <div class="translation-left-top-row">
+              <div class="keybind">
+                <label for="key-forward">Fwd</label>
+                <input id="key-forward" />
+              </div>
+            </div>
+            <div class="translation-left-bottom-row">
+              <div class="keybind"><label for="key-left">Left</label><input id="key-left" /></div>
+              <div class="keybind"><label for="key-backward">Back</label><input id="key-backward" /></div>
+              <div class="keybind"><label for="key-right">Right</label><input id="key-right" /></div>
+            </div>
+          </div>
+
+          <div class="translation-right-block">
+            <div class="translation-right-top-row">
+              <div class="keybind">
+                <label for="key-up">Up</label>
+                <input id="key-up" />
+              </div>
+            </div>
+            <div class="translation-right-bottom-row">
+              <div class="keybind"><label for="key-ana">Ana</label><input id="key-ana" /></div>
+              <div class="keybind"><label for="key-down">Down</label><input id="key-down" /></div>
+              <div class="keybind"><label for="key-kata">Kata</label><input id="key-kata" /></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h4>Action</h4>
+        <div class="bottom-row">
+          <div class="keybind shoot">
+            <label for="key-shoot">Shoot</label>
+            <input id="key-shoot" />
+          </div>
+        </div>
+      </div>
+
+      <button id="close-settings" aria-label="Close settings">×</button>
+    </div>
+  </div>
+
+  <script src="settings.js"></script>
+  <script src="sketch.js"></script>
+  <script src="math.js"></script>
+</body>
+
 </html>
