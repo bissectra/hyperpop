@@ -1,6 +1,7 @@
 let stars = [];
 let model;
-let shootSounds = {};
+let failSound;
+let shotSounds = {};
 let score = 0; // Initialize the score
 
 const CHUNK_SIZE = 600;
@@ -27,7 +28,8 @@ function loadBindings() {
 }
 
 function preload() {
-  shootSounds = {
+  failSound = loadSound("fail.mp3");
+  shotSounds = {
     1: loadSound("shot_red.wav"),
     2: loadSound("shot_orange.wav"),
     3: loadSound("shot_yellow.wav"),
@@ -74,11 +76,7 @@ function keyPressed() {
   // handle shooting
   const shootBinding = getKeyCode(window.bindings.shoot);
   const pressedKey = getKeyCode(key);
-  console.log(`Key pressed: ${key} (code: ${pressedKey})`);
-  console.log(`Shoot binding: ${shootBinding}`);
-  if (pressedKey === shootBinding) {
-    shoot();
-  }
+  if (pressedKey === shootBinding) shoot();
 }
 
 // ——— World Management ———
@@ -136,7 +134,7 @@ function getCamera4DPosition() {
 
 function unloadFarChunks(cameraCoords, maxDistance = CHUNK_RADIUS + 3) {
   for (const key in chunkContents) {
-    const [i, j, k, l] = key.split(',').map(Number);
+    const [i, j, k, l] = key.split(",").map(Number);
     const dist = Math.max(
       Math.abs(i - cameraCoords[0]),
       Math.abs(j - cameraCoords[1]),
@@ -364,9 +362,12 @@ function shoot() {
   if (hits > 0) {
     score += gained;
     updateScore();
-    if (lastScore && shootSounds[lastScore]) {
-      shootSounds[lastScore].play();
+    if (lastScore && shotSounds[lastScore]) {
+      shotSounds[lastScore].play();
     }
+  } else {
+    if (!failSound.isLoaded()) return;
+    failSound.play();
   }
 }
 
