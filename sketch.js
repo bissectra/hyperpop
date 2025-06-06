@@ -291,7 +291,7 @@ function isSettingsOpen() {
 function handleInput() {
   if (isSettingsOpen()) return; // Ignore input if settings are open
 
-  const step = 1.5;
+  const step = 8;
   const rotationSpeed = 0.008;
 
   // translation keys usando bindings
