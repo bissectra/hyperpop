@@ -3,7 +3,7 @@ let model;
 let failSound;
 let shotSounds = {};
 let score = 0; // Initialize the score
-let diff_vit = 0.001;
+let diff_vit = 0.001 ;
 let diff_range = 500;
 //oui
 const CHUNK_SIZE = 600;
