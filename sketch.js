@@ -3,7 +3,7 @@ let model;
 let failSound;
 let shotSounds = {};
 let score = 0; // Initialize the score
-
+//oui
 const CHUNK_SIZE = 600;
 const CHUNK_RADIUS = 2; // Load chunks within this radius in 4D
 let chunkContents = {}; // key → list of objects
@@ -222,10 +222,10 @@ function updCentre(k){
   for(let i = 0;i< chunkContents[k].length;i++){
     chunkContents[k][i].av = (chunkContents[k][i].av+0.00005) %4;
     if(chunkContents[k][i].av<=2){
-      chunkContents[k][i].center =  chunkContents[k][i].map((val, i) => val + 500*(chunkContents[k][i].av%1)*v[i]);
+      chunkContents[k][i].center =  chunkContents[k][i].center.map((val, i) => val + 500*(chunkContents[k][i].av%1)*v[i]);
     }
     else{
-      chunkContents[k][i].center =  chunkContents[k][i].map((val, i) => val - 500*(chunkContents[k][i].av%1)*v[i]);
+      chunkContents[k][i].center =  chunkContents[k][i].center.map((val, i) => val - 500*(chunkContents[k][i].av%1)*v[i]);
   }
   }
 }
