@@ -216,10 +216,10 @@ function drawWorld() {
 
 function depCentre(c,v,a){
   if(a<=2){
-    return c.map((val, i) => val + (a%1)*v[i]);
+    return c.map((val, i) => val + 50*(a%1)*v[i]);
   }
   else{
-    return c.map((val, i) => val - (a%1)*v[i]);
+    return c.map((val, i) => val - 50*(a%1)*v[i]);
   }
 }
 function updCentre(){
