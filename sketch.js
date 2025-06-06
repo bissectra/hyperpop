@@ -206,7 +206,7 @@ function drawWorld() {
           const ck = chunkCoords[2] + dk;
           const cl = chunkCoords[3] + dl;
           const key = getChunkKey(ci, cj, ck, cl);
-          if (chunkContents[key]) {
+          if (chunkContents[key] && chunkContents[key] !== undefined) {
             updCentre(key)
             chunkContents[key].forEach(({ center, radius, color,vecteur,av }) => {
               drawSphere(depCentre(center,vecteur,av), radius, color);
