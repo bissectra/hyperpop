@@ -9,10 +9,7 @@
 \usepackage{titlesec}
 \usepackage{parskip}
 
-%\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
-%\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
-
-\title{Hyperpop! \\ \normalsize{Jeu de tir sur des sphères 4D}}
+\title{Hyperpop! \\ \normalsize{Jeu de tir dans un espace en 4D}}
 \author{Caio COSTA, Youssef SAIDI}
 \date{Printemps 2025}
 
@@ -24,43 +21,44 @@
 
 \section{Introduction}
 
-Ce projet a consisté à concevoir un jeu interactif prenant place dans un espace à quatre dimensions, dans lequel le joueur doit tirer sur des sphères 4D. L'originalité du jeu réside dans le fait que l'on ne visualise pas directement les objets 4D, mais uniquement leur intersection avec un hyperplan 3D, que l'on peut déplacer le long de la quatrième dimension.
+Ce projet a consisté à concevoir un jeu interactif se déroulant dans un espace à quatre dimensions, où le joueur doit tirer sur des sphères 4D. L’originalité du jeu réside dans le fait que les objets 4D ne sont pas visualisés directement, mais à travers leur intersection avec un hyperplan 3D, que le joueur peut déplacer le long de la quatrième dimension.
 
-Ce travail nous a permis d'explorer les concepts de géométrie en dimension supérieure, tout en les rendant accessibles grâce à une représentation tridimensionnelle interactive et intuitive.
+Ce travail nous a permis d'explorer les concepts de géométrie en dimension supérieure, tout en les rendant accessibles via une représentation tridimensionnelle interactive et intuitive.
 
 \section{Modélisation géométrique}
 
 \subsection{Sphères en 4D}
 
-Une sphère dans un espace à quatre dimensions est définie comme l'ensemble des points de $\mathbb{R}^4$ situés à une distance constante $r$ d'un centre $(x_0, y_0, z_0, w_0)$ :
+Une sphère dans l’espace $\mathbb{R}^4$ est définie comme l’ensemble des points situés à une distance constante $r$ d’un centre $(x_0, y_0, z_0, w_0)$ :
 \[
 (x - x_0)^2 + (y - y_0)^2 + (z - z_0)^2 + (w - w_0)^2 = r^2.
 \]
 
 \subsection{Hyperplan 3D de visualisation}
 
-Pour visualiser les objets 4D, nous utilisons un hyperplan de la forme $w = c$, avec $c$ variable. Ce plan joue le rôle d’une “caméra” 3D balayant l’espace 4D, et permet d’en extraire une coupe tridimensionnelle observable à l’écran.
+Pour visualiser les objets 4D, nous utilisons un hyperplan de la forme $w = c$, avec $c$ variable. Ce plan agit comme une « caméra » 3D qui balaie l’espace 4D et en extrait une coupe tridimensionnelle observable à l’écran.
 
-Pour comprendre le concept, il est utile de se représenter ce que c'est l'intersection avec un hyperplan en 3D. Donc juste avec un plan, on peut voir que l'intersection avec un cube va donner soit un point, soit un triangle, soit un carré, soit un hexagone, alors qu'avec une sphère ça donne simplement un cercle. Le même concept reste vrai en 4D donc on a décidé de partir sur un jeu avec des sphères 4D.
+On peut se représenter ce procédé par analogie avec la 3D : l’intersection d’un cube avec un plan peut donner un point, un triangle, un carré ou un hexagone, selon la position du plan. En revanche, l’intersection d’une sphère donne toujours un disque (ou un cercle). Le même principe s’applique en 4D, ce qui justifie le choix de sphères pour notre jeu.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.3\linewidth]{intersection-cube}
-    \caption{Intersection plan cube}
+    \caption{Intersection d’un plan avec un cube}
     \label{fig:inter-plan-cube}
 \end{figure}
+
 \begin{figure}
     \centering
     \includegraphics[width=0.3\linewidth]{intersection-sphere}
-    \caption{Intersection plan sphère}
+    \caption{Intersection d’un plan avec une sphère}
     \label{fig:inter-plan-sphere}
 \end{figure}
 
 \subsection{Intersection sphère 4D / hyperplan 3D}
 
-L’intersection d’une sphère 4D avec le plan $w = c$ est une sphère 3D (ou vide si le plan est trop éloigné du centre en dimension $w$). Son rayon est donné par :
+L’intersection d’une sphère 4D avec le plan $w = c$ est une sphère 3D (ou vide si le plan est trop éloigné du centre dans la direction $w$). Le rayon de cette coupe est donné par :
 \[
-r' = \sqrt{r^2 - (w_0 - c)^2}
+r' = \sqrt{r^2 - (w_0 - c)^2},
 \]
 à condition que $|w_0 - c| \leq r$.
 
@@ -68,66 +66,63 @@ r' = \sqrt{r^2 - (w_0 - c)^2}
 
 \subsection{Navigation dans la quatrième dimension}
 
-L’ensemble des objets du jeu est affecté par une matrice \textit{model} représentant leur position dans l’espace. Pour simuler une caméra mobile dans l’espace 4D, on applique à cette matrice des transformations inverses (translations, rotations), déclenchées par les touches pressées par le joueur.
+Les objets du jeu sont positionnés dans l’espace via une matrice \textit{model}. Pour simuler une caméra mobile en 4D, on applique à cette matrice des transformations inverses (translations, rotations), déclenchées par les actions du joueur.
 
-Le joueur peut se déplacer dans l'espace 3D mais également faire déplacer l'hyperplan 3D dans l'espace 4D pour faire apparaître de nouveaux objets.
+Celui-ci peut se déplacer dans l’espace 3D, mais aussi déplacer l’hyperplan de visualisation dans la direction $w$, révélant ainsi de nouveaux objets.
 
 \subsection{Déplacement des sphères}
 
-Chaque sphère se déplace de manière périodique selon une direction choisie aléatoirement à son apparition. Cela permet de créer une dynamique dans l’espace et de rendre le jeu plus vivant.
+Chaque sphère se déplace de manière périodique selon une direction aléatoire déterminée lors de son apparition. Cela crée un environnement dynamique et rend le jeu plus immersif.
 
 \subsection{Système de tir}
 
-Le joueur dispose d’un viseur fixe, situé au centre de l’écran, et peut tirer sur les sphères visibles. Selon la sphère touchée, il obtient un certain nombre de points, et un effet sonore spécifique est joué pour indiquer un tir réussi.
+Le joueur dispose d’un viseur fixe, centré à l’écran, et peut tirer sur les sphères visibles. En fonction de la sphère touchée, un certain nombre de points est attribué et un effet sonore est joué pour signaler un tir réussi.
 
 \section{Affichage et rendu}
 
 \subsection{Chunks}
 
-Afin de gérer efficacement l’affichage dans un espace potentiellement très grand, nous avons découpé l’univers en ``chunks'', c’est-à-dire en sous-espaces 3D localisés. Seuls les chunks proches de la position courante du joueur sont affichés.
+Afin de gérer efficacement un espace potentiellement vaste, nous avons découpé l’univers en « chunks », c’est-à-dire en sous-espaces 3D localisés. Seuls les chunks proches de la position actuelle du joueur sont affichés, réduisant ainsi la charge de calcul.
 
-\subsection{Mise à jour à chaque frame}
+\subsection{Mise à jour par frame}
 
 À chaque image (frame), le moteur de jeu effectue les opérations suivantes :
 \begin{itemize}
-    \item Détection des touches pressées et mise à jour de la matrice \textit{model}.
-    \item Mise à jour des chunks visibles selon la position du joueur.
-    \item Affichage des étoiles et du fond spatial.
-    \item Mise à jour de la position des sphères et affichage de leur intersection avec l’hyperplan courant.
+    \item Lecture des entrées clavier et mise à jour de la matrice \textit{model}.
+    \item Détermination des chunks visibles.
+    \item Rendu du fond spatial et des étoiles.
+    \item Mise à jour des positions des sphères et affichage de leur intersection avec l’hyperplan courant.
 \end{itemize}
 
 \subsection{Rendu visuel}
 
-Le rendu est assuré par p5.js. Les sphères issues des intersections 4D–3D sont représentées sous forme de sphères classiques 3D. Le tout est affiché sur fond sombre avec quelques étoiles pour renforcer l’immersion spatiale.
-
-
+Le rendu est assuré par la bibliothèque \texttt{p5.js}. Les sphères issues des intersections 4D–3D sont affichées comme des sphères 3D classiques. L’ensemble est rendu sur un fond sombre, agrémenté d’étoiles pour renforcer l’ambiance spatiale.
 
 \section{Difficultés rencontrées}
 
-La modélisation et la visualisation en 4D présentent plusieurs défis, notamment :
+Ce projet a soulevé plusieurs défis, notamment :
 \begin{itemize}
-    \item \textbf{Projection 4D $\rightarrow$ 3D} : comprendre et implémenter la coupe d'une sphère 4D par un hyperplan 3D.
-    \item \textbf{Navigation intuitive} : trouver des contrôles permettant au joueur de se déplacer aisément dans un espace à quatre dimensions.
-    \item \textbf{Performance} : gérer efficacement un grand nombre d'objets grâce à la structure en chunks.
-    \item \textbf{Gestion des entrées clavier} : permettre la personnalisation des touches pour différents claviers (QWERTY/AZERTY).
+    \item \textbf{Projection 4D $\rightarrow$ 3D} : comprendre et implémenter la coupe d’une sphère 4D par un hyperplan.
+    \item \textbf{Navigation intuitive} : concevoir des contrôles fluides dans un espace à quatre dimensions.
+    \item \textbf{Performance} : maintenir une fluidité satisfaisante malgré un grand nombre d’objets grâce aux chunks.
+    \item \textbf{Compatibilité clavier} : gérer les différences entre claviers QWERTY et AZERTY.
 \end{itemize}
 
 \section{Perspectives et améliorations}
 
-Plusieurs pistes pourraient être explorées pour enrichir le projet :
+Plusieurs extensions sont envisageables :
 \begin{itemize}
     \item Ajouter des modes de jeu (contre-la-montre, survie, etc.).
-    \item Introduire des objets 4D de formes variées (tesseracts, polytopes).
-    \item Proposer une visualisation alternative (projection perspective 4D).
-    \item Ajouter un tutoriel interactif pour expliquer la navigation en 4D.
-    \item Remplacer la lumière 3D fixe dans le referentiel de la camera par une lumière dynamique 4D fixe dans le référentiel du monde.
-    \item Ajouter des effets visuels (explosions, particules, bulles qui explosent) lors des tirs.
-    \item Système de recompenses lors des combos de tirs (par exemple, si le joueur touche 3 sphères en moins de 5 secondes, il gagne un bonus de points, ou s'il frappe plusieurs sphères avec un seul tir, il gagne un multiplicateur de points).
+    \item Introduire d’autres objets 4D (tesseracts, polytopes réguliers).
+    \item Proposer une visualisation par projection perspective depuis la 4D.
+    \item Ajouter un tutoriel interactif pour apprendre à se déplacer en 4D.
+    \item Remplacer la lumière fixe en 3D par une lumière en 4D, fixe dans le référentiel du monde.
+    \item Ajouter des effets visuels (explosions, particules, bulles éclatantes).
+    \item Mettre en place un système de récompense : combos de tirs, multiplicateurs de points si plusieurs sphères sont touchées en un seul tir ou en un court laps de temps.
 \end{itemize}
 
 \section{Conclusion}
 
-Ce projet a été l’occasion d’aborder de manière ludique et concrète les défis de la visualisation en dimension supérieure. Il nous a permis de combiner des compétences en géométrie, en programmation graphique et en conception interactive pour créer une expérience originale et pédagogique.
-
+Ce projet a été l’occasion d’aborder de manière concrète et ludique les enjeux de la visualisation en dimension supérieure. Il nous a permis de mobiliser des compétences en géométrie, en programmation graphique et en conception interactive pour créer une expérience originale, immersive et pédagogique.
 
 \end{document}
