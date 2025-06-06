@@ -218,7 +218,7 @@ function drawWorld() {
     }
   }
 }
-
+//oui
 function updCentre(k){
   for(let i = 0;i< chunkContents[k].length;i++){
     chunkContents[k][i].av = (chunkContents[k][i].av+0.00005) %4;
