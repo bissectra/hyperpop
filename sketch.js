@@ -208,8 +208,8 @@ function drawWorld() {
           const key = getChunkKey(ci, cj, ck, cl);
           if (chunkContents[key] && chunkContents[key] !== undefined) {
             updCentre(key);
-            chunkContents[key].forEach(({ center, radius, color,vecteur,av }) => {
-              drawSphere(depCentre(center,vecteur,av), radius, color);
+            chunkContents[key].forEach(({ center, radius, color }) => {
+              drawSphere(center, radius, color);
             });
           }
         }
@@ -218,17 +218,15 @@ function drawWorld() {
   }
 }
 
-function depCentre(c,v,a){
-  if(a<=2){
-    return c.map((val, i) => val + 500*(a%1)*v[i]);
-  }
-  else{
-    return c.map((val, i) => val - 500*(a%1)*v[i]);
-  }
-}
 function updCentre(k){
   for(let i = 0;i< chunkContents[k].length;i++){
     chunkContents[k][i].av = (chunkContents[k][i].av+0.00005) %4;
+    if(chunkContents[k][i].av<=2){
+      chunkContents[k][i].center =  chunkContents[k][i].map((val, i) => val + 500*(chunkContents[k][i].av%1)*v[i]);
+    }
+    else{
+      chunkContents[k][i].center =  chunkContents[k][i].map((val, i) => val - 500*(chunkContents[k][i].av%1)*v[i]);
+  }
   }
 }
 function drawStars() {
