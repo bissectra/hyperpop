@@ -227,8 +227,8 @@ function depCentre(c,v,a){
   }
 }
 function updCentre(k){
-  for(let i = 0;i< chunkContents[key].length;i++){
-    chunkContents[key][i].av = chunkContents[key][i].av+0.1 %4;
+  for(let i = 0;i< chunkContents[k].length;i++){
+    chunkContents[k][i].av = chunkContents[k][i].av+0.1 %4;
   }
 }
 function drawStars() {
