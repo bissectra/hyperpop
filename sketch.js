@@ -3,6 +3,8 @@ let model;
 let failSound;
 let shotSounds = {};
 let score = 0; // Initialize the score
+let diff_vit = 0.005;
+let diff_range = 500;
 //oui
 const CHUNK_SIZE = 600;
 const CHUNK_RADIUS = 2; // Load chunks within this radius in 4D
@@ -222,12 +224,12 @@ function drawWorld() {
 //oui
 function updCentre(k){
   for(let i = 0;i< chunkContents[k].length;i++){
-    chunkContents[k][i].av = (chunkContents[k][i].av+0.0005) %4;
+    chunkContents[k][i].av = (chunkContents[k][i].av+diff_vit) %4;
     if(chunkContents[k][i].av<=2){
-      chunkContents[k][i].center =  chunkContents[k][i].rcenter.map((val, j) => val + 500*(chunkContents[k][i].av % 1)*chunkContents[k][i].vecteur[j]);
+      chunkContents[k][i].center =  chunkContents[k][i].rcenter.map((val, j) => val + diff_range*(chunkContents[k][i].av % 1)*chunkContents[k][i].vecteur[j]);
     }
     else{
-      chunkContents[k][i].center =  chunkContents[k][i].rcenter.map((val, j) => val - 500*(chunkContents[k][i].av % 1)*chunkContents[k][i].vecteur[j]);
+      chunkContents[k][i].center =  chunkContents[k][i].rcenter.map((val, j) => val - diff_range*(chunkContents[k][i].av % 1)*chunkContents[k][i].vecteur[j]);
   }
   }
 }
