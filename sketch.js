@@ -1,4 +1,4 @@
-let stars = [];
+let stars = [];//oui
 let model;
 let failSound;
 let shotSounds = {};
