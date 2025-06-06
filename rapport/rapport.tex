@@ -3,21 +3,19 @@
 \usepackage[T1]{fontenc}
 \usepackage[french]{babel}
 \usepackage{amsmath, amssymb}
-\usepackage[margin=2.5cm]{geometry}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{titlesec}
 \usepackage{parskip}
+\usepackage{float}
 
 \title{Hyperpop! \\ \normalsize{Jeu de tir dans un espace en 4D}}
 \author{Caio COSTA, Youssef SAIDI}
-\date{Printemps 2025}
+\date{X2023}
 
 \begin{document}
 
 \maketitle
-
-\tableofcontents
 
 \section{Introduction}
 
@@ -39,15 +37,14 @@ Une sphère dans l’espace $\mathbb{R}^4$ est définie comme l’ensemble des p
 Pour visualiser les objets 4D, nous utilisons un hyperplan de la forme $w = c$, avec $c$ variable. Ce plan agit comme une « caméra » 3D qui balaie l’espace 4D et en extrait une coupe tridimensionnelle observable à l’écran.
 
 On peut se représenter ce procédé par analogie avec la 3D : l’intersection d’un cube avec un plan peut donner un point, un triangle, un carré ou un hexagone, selon la position du plan. En revanche, l’intersection d’une sphère donne toujours un disque (ou un cercle). Le même principe s’applique en 4D, ce qui justifie le choix de sphères pour notre jeu.
-
-\begin{figure}[h]
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.3\linewidth]{intersection-cube}
 	\caption{Intersection d’un plan avec un cube}
 	\label{fig:inter-plan-cube}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.3\linewidth]{intersection-sphere}
 	\caption{Intersection d’un plan avec une sphère}
