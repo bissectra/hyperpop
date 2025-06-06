@@ -63,7 +63,7 @@ function draw() {
   updateChunks();
   setupLighting();
   drawStars();
-  //drawWorld();
+  drawWorld();
   drawTarget();
 }
 
@@ -118,6 +118,8 @@ function loadChunk(i, j, k, l) {
       color,
       score,
       chunk: key,
+      vecteur : Array.from({ length: 4 }, () => random(-1, 1)),
+      av : 0,
     });
   }
 
@@ -188,6 +190,7 @@ function generateStars(count) {
   }
 }
 
+
 // ——— Drawing Functions ———
 function drawWorld() {
   const pos = getCamera4DPosition();
@@ -204,8 +207,9 @@ function drawWorld() {
           const cl = chunkCoords[3] + dl;
           const key = getChunkKey(ci, cj, ck, cl);
           if (chunkContents[key]) {
-            chunkContents[key].forEach(({ center, radius, color }) => {
-              drawSphere(center, radius, color);
+            updCentre(key)
+            chunkContents[key].forEach(({ center, radius, color,vecteur,av }) => {
+              drawSphere(depCentre(center,vecteur,av), radius, color);
             });
           }
         }
@@ -222,9 +226,9 @@ function depCentre(c,v,a){
     return c.map((val, i) => val - 50*(a%1)*v[i]);
   }
 }
-function updCentre(){
-  for(let i = 0;i< stars.length;i++){
-    stars[i].av = stars[i].av+0.1 %4;
+function updCentre(k){
+  for(let i = 0;i< chunkContents[key].length;i++){
+    chunkContents[key][i].av = chunkContents[key][i].av+0.1 %4;
   }
 }
 function drawStars() {
