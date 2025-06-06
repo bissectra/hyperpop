@@ -180,6 +180,7 @@ function generateStars(count) {
     const dist = 2000;
     stars.push({
       center: unit.map((v) => v * dist),
+      rcenter : unit.map((v) => v * dist),
       radius: random(8, 18),
       color: [255, 255, 255], // white color
       vecteur : Array.from({ length: 4 }, () => random(-1, 1)),
@@ -222,10 +223,10 @@ function updCentre(k){
   for(let i = 0;i< chunkContents[k].length;i++){
     chunkContents[k][i].av = (chunkContents[k][i].av+0.00005) %4;
     if(chunkContents[k][i].av<=2){
-      chunkContents[k][i].center =  chunkContents[k][i].center.map((val, j) => val + 500*(chunkContents[k][i].av % 1)*chunkContents[k][i].vecteur[j]);
+      chunkContents[k][i].center =  chunkContents[k][i].rcenter.map((val, j) => val + 500*(chunkContents[k][i].av % 1)*chunkContents[k][i].vecteur[j]);
     }
     else{
-      chunkContents[k][i].center =  chunkContents[k][i].center.map((val, j) => val - 500*(chunkContents[k][i].av % 1)*chunkContents[k][i].vecteur[j]);
+      chunkContents[k][i].center =  chunkContents[k][i].rcenter.map((val, j) => val - 500*(chunkContents[k][i].av % 1)*chunkContents[k][i].vecteur[j]);
   }
   }
 }
