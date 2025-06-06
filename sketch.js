@@ -9,7 +9,7 @@ let diff_range = 500;
 const CHUNK_SIZE = 600;
 const CHUNK_RADIUS = 2; // Load chunks within this radius in 4D
 let chunkContents = {}; // key → list of objects
-
+//oui
 const RAINBOW_COLORS = [
   { color: [255, 0, 0], score: 1 }, // Red
   { color: [255, 127, 0], score: 2 }, // Orange
