@@ -180,6 +180,10 @@ function generateStars(count) {
       center: unit.map((v) => v * dist),
       radius: random(8, 18),
       color: [255, 255, 255], // white color
+      vecteur : Array.from({ length: 4 }, () => random(-1, 1)),
+      av : 0,
+      
+      
     });
   }
 }
@@ -210,14 +214,27 @@ function drawWorld() {
   }
 }
 
+function depCentre(c,v,a){
+  if(a<=2){
+    return c.map((val, i) => val + (a%1)*v[i]);
+  }
+  else{
+    return c.map((val, i) => val - (a%1)*v[i]);
+  }
+}
+function updCentre(){
+  for(let i = 0;i< stars.length;i++){
+    stars[i].av = stars[i].av+0.1 %4;
+  }
+}
 function drawStars() {
   // Remove translação do modelo: só rotação
   let rotOnly = model.map((row) => row.slice());
   // Zera a coluna de translação
   for (let i = 0; i < 4; i++) rotOnly[i][4] = 0;
-
-  stars.forEach(({ center, radius, color }) => {
-    drawSphere(center, radius, color, rotOnly, () => {
+  updCentre();
+  stars.forEach(({ center, radius, color,vecteur,av }) => {
+    drawSphere(depCentre(center,vecteur,av), radius, color, rotOnly, () => {
       emissiveMaterial(...color);
     });
   });
