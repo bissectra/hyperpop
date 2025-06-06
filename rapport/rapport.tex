@@ -31,7 +31,7 @@ Ce travail nous a permis d'explorer les concepts de géométrie en dimension sup
 
 Une sphère dans l’espace $\mathbb{R}^4$ est définie comme l’ensemble des points situés à une distance constante $r$ d’un centre $(x_0, y_0, z_0, w_0)$ :
 \[
-(x - x_0)^2 + (y - y_0)^2 + (z - z_0)^2 + (w - w_0)^2 = r^2.
+	(x - x_0)^2 + (y - y_0)^2 + (z - z_0)^2 + (w - w_0)^2 = r^2.
 \]
 
 \subsection{Hyperplan 3D de visualisation}
@@ -41,24 +41,24 @@ Pour visualiser les objets 4D, nous utilisons un hyperplan de la forme $w = c$, 
 On peut se représenter ce procédé par analogie avec la 3D : l’intersection d’un cube avec un plan peut donner un point, un triangle, un carré ou un hexagone, selon la position du plan. En revanche, l’intersection d’une sphère donne toujours un disque (ou un cercle). Le même principe s’applique en 4D, ce qui justifie le choix de sphères pour notre jeu.
 
 \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.3\linewidth]{intersection-cube}
-    \caption{Intersection d’un plan avec un cube}
-    \label{fig:inter-plan-cube}
+	\centering
+	\includegraphics[width=0.3\linewidth]{intersection-cube}
+	\caption{Intersection d’un plan avec un cube}
+	\label{fig:inter-plan-cube}
 \end{figure}
 
 \begin{figure}
-    \centering
-    \includegraphics[width=0.3\linewidth]{intersection-sphere}
-    \caption{Intersection d’un plan avec une sphère}
-    \label{fig:inter-plan-sphere}
+	\centering
+	\includegraphics[width=0.3\linewidth]{intersection-sphere}
+	\caption{Intersection d’un plan avec une sphère}
+	\label{fig:inter-plan-sphere}
 \end{figure}
 
 \subsection{Intersection sphère 4D / hyperplan 3D}
 
 L’intersection d’une sphère 4D avec le plan $w = c$ est une sphère 3D (ou vide si le plan est trop éloigné du centre dans la direction $w$). Le rayon de cette coupe est donné par :
 \[
-r' = \sqrt{r^2 - (w_0 - c)^2},
+	r' = \sqrt{r^2 - (w_0 - c)^2},
 \]
 à condition que $|w_0 - c| \leq r$.
 
@@ -88,10 +88,10 @@ Afin de gérer efficacement un espace potentiellement vaste, nous avons découp�
 
 À chaque image (frame), le moteur de jeu effectue les opérations suivantes :
 \begin{itemize}
-    \item Lecture des entrées clavier et mise à jour de la matrice \textit{model}.
-    \item Détermination des chunks visibles.
-    \item Rendu du fond spatial et des étoiles.
-    \item Mise à jour des positions des sphères et affichage de leur intersection avec l’hyperplan courant.
+	\item Lecture des entrées clavier et mise à jour de la matrice \textit{model}.
+	\item Détermination des chunks visibles.
+	\item Rendu du fond spatial et des étoiles.
+	\item Mise à jour des positions des sphères et affichage de leur intersection avec l’hyperplan courant.
 \end{itemize}
 
 \subsection{Rendu visuel}
@@ -102,24 +102,34 @@ Le rendu est assuré par la bibliothèque \texttt{p5.js}. Les sphères issues de
 
 Ce projet a soulevé plusieurs défis, notamment :
 \begin{itemize}
-    \item \textbf{Projection 4D $\rightarrow$ 3D} : comprendre et implémenter la coupe d’une sphère 4D par un hyperplan.
-    \item \textbf{Navigation intuitive} : concevoir des contrôles fluides dans un espace à quatre dimensions.
-    \item \textbf{Performance} : maintenir une fluidité satisfaisante malgré un grand nombre d’objets grâce aux chunks.
-    \item \textbf{Compatibilité clavier} : gérer les différences entre claviers QWERTY et AZERTY.
+	\item \textbf{Projection 4D $\rightarrow$ 3D} : comprendre et implémenter la coupe d’une sphère 4D par un hyperplan.
+	\item \textbf{Navigation intuitive} : concevoir des contrôles fluides dans un espace à quatre dimensions.
+	\item \textbf{Performance} : maintenir une fluidité satisfaisante malgré un grand nombre d’objets grâce aux chunks.
+	\item \textbf{Compatibilité clavier} : gérer les différences entre claviers QWERTY et AZERTY.
 \end{itemize}
 
 \section{Perspectives et améliorations}
 
 Plusieurs extensions sont envisageables :
 \begin{itemize}
-    \item Ajouter des modes de jeu (contre-la-montre, survie, etc.).
-    \item Introduire d’autres objets 4D (tesseracts, polytopes réguliers).
-    \item Proposer une visualisation par projection perspective depuis la 4D.
-    \item Ajouter un tutoriel interactif pour apprendre à se déplacer en 4D.
-    \item Remplacer la lumière fixe en 3D par une lumière en 4D, fixe dans le référentiel du monde.
-    \item Ajouter des effets visuels (explosions, particules, bulles éclatantes).
-    \item Mettre en place un système de récompense : combos de tirs, multiplicateurs de points si plusieurs sphères sont touchées en un seul tir ou en un court laps de temps.
+	\item Ajouter des modes de jeu (contre-la-montre, survie, etc.).
+	\item Introduire d’autres objets 4D (tesseracts, polytopes réguliers).
+	\item Proposer une visualisation par projection perspective depuis la 4D.
+	\item Ajouter un tutoriel interactif pour apprendre à se déplacer en 4D.
+	\item Remplacer la lumière fixe en 3D par une lumière en 4D, fixe dans le référentiel du monde.
+	\item Ajouter des effets visuels (explosions, particules, bulles éclatantes).
+	\item Mettre en place un système de récompense : combos de tirs, multiplicateurs de points si plusieurs sphères sont touchées en un seul tir ou en un court laps de temps.
 \end{itemize}
+
+\section{Ressources et accès au projet}
+
+Le code source, la documentation et une version jouable du projet sont disponibles en ligne :
+\begin{itemize}
+    \item \textbf{Page GitHub} : \url{https://github.com/bissectra/hyperpop}
+    \item \textbf{Jouer en ligne} : \url{https://bissectra.github.io/hyperpop/}
+\end{itemize}
+
+La gestion du projet a été assurée à l'aide de \textbf{Git} pour le suivi des versions et de la plateforme \textbf{GitHub} (issues, pull requests) pour organiser les tâches, suivre les bugs et coordonner le travail collaboratif.
 
 \section{Conclusion}
 
