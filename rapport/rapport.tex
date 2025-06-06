@@ -100,6 +100,31 @@ Afin de gérer efficacement l’affichage dans un espace potentiellement très g
 
 Le rendu est assuré par p5.js. Les sphères issues des intersections 4D–3D sont représentées sous forme de sphères classiques 3D. Le tout est affiché sur fond sombre avec quelques étoiles pour renforcer l’immersion spatiale.
 
+
+
+\section{Difficultés rencontrées}
+
+La modélisation et la visualisation en 4D présentent plusieurs défis, notamment :
+\begin{itemize}
+    \item \textbf{Projection 4D $\rightarrow$ 3D} : comprendre et implémenter la coupe d'une sphère 4D par un hyperplan 3D.
+    \item \textbf{Navigation intuitive} : trouver des contrôles permettant au joueur de se déplacer aisément dans un espace à quatre dimensions.
+    \item \textbf{Performance} : gérer efficacement un grand nombre d'objets grâce à la structure en chunks.
+    \item \textbf{Gestion des entrées clavier} : permettre la personnalisation des touches pour différents claviers (QWERTY/AZERTY).
+\end{itemize}
+
+\section{Perspectives et améliorations}
+
+Plusieurs pistes pourraient être explorées pour enrichir le projet :
+\begin{itemize}
+    \item Ajouter des modes de jeu (contre-la-montre, survie, etc.).
+    \item Introduire des objets 4D de formes variées (tesseracts, polytopes).
+    \item Proposer une visualisation alternative (projection perspective 4D).
+    \item Ajouter un tutoriel interactif pour expliquer la navigation en 4D.
+    \item Remplacer la lumière 3D fixe dans le referentiel de la camera par une lumière dynamique 4D fixe dans le référentiel du monde.
+    \item Ajouter des effets visuels (explosions, particules, bulles qui explosent) lors des tirs.
+    \item Système de recompenses lors des combos de tirs (par exemple, si le joueur touche 3 sphères en moins de 5 secondes, il gagne un bonus de points, ou s'il frappe plusieurs sphères avec un seul tir, il gagne un multiplicateur de points).
+\end{itemize}
+
 \section{Conclusion}
 
 Ce projet a été l’occasion d’aborder de manière ludique et concrète les défis de la visualisation en dimension supérieure. Il nous a permis de combiner des compétences en géométrie, en programmation graphique et en conception interactive pour créer une expérience originale et pédagogique.
