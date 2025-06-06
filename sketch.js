@@ -3,7 +3,7 @@ let model;
 let failSound;
 let shotSounds = {};
 let score = 0; // Initialize the score
-let diff_vit = 0.005 ;
+let diff_vit = 0.003 ;
 let diff_range = 500;
 //oui
 //oui
