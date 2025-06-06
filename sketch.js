@@ -303,8 +303,8 @@ function handleInput() {
     backward: [0, -step, 0, 0],
     up: [0, 0, step, 0],
     down: [0, 0, -step, 0],
-    ana: [0, 0, 0, step],
-    kata: [0, 0, 0, -step],
+    ana: [0, 0, 0, 0.1*step],
+    kata: [0, 0, 0, -0.1*step],
   };
 
   Object.entries(translationMap).forEach(([dir, vec]) => {
