@@ -6,6 +6,7 @@ let score = 0; // Initialize the score
 let diff_vit = 0.001 ;
 let diff_range = 500;
 //oui
+//oui
 const CHUNK_SIZE = 600;
 const CHUNK_RADIUS = 2; // Load chunks within this radius in 4D
 let chunkContents = {}; // key → list of objects
