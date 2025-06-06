@@ -222,15 +222,15 @@ function drawWorld() {
     }
   }
 }
-//oui
+//Ici on met a jour le centre des spheres selon un cycle periodique, chaque boule ne bouge que dans une seule direction
 function updCentre(k){
   for(let i = 0;i< chunkContents[k].length;i++){
     chunkContents[k][i].av = (chunkContents[k][i].av+diff_vit) %4;
-    if(chunkContents[k][i].av<=2){
-      chunkContents[k][i].center =  chunkContents[k][i].rcenter.map((val, j) => val + diff_range*(chunkContents[k][i].av % 1)*chunkContents[k][i].vecteur[j]);
+    if(chunkContents[k][i].av<2){
+      chunkContents[k][i].center =  chunkContents[k][i].rcenter.map((val, j) => val + diff_range*((chunkContents[k][i].av % 2)-1)*chunkContents[k][i].vecteur[j]);
     }
     else{
-      chunkContents[k][i].center =  chunkContents[k][i].rcenter.map((val, j) => val - diff_range*(chunkContents[k][i].av % 1)*chunkContents[k][i].vecteur[j]);
+      chunkContents[k][i].center =  chunkContents[k][i].rcenter.map((val, j) => val - diff_range*((chunkContents[k][i].av % 2)-1)*chunkContents[k][i].vecteur[j]);
   }
   }
 }
