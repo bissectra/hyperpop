@@ -220,15 +220,15 @@ function drawWorld() {
 
 function depCentre(c,v,a){
   if(a<=2){
-    return c.map((val, i) => val + 50*(a%1)*v[i]);
+    return c.map((val, i) => val + 500*(a%1)*v[i]);
   }
   else{
-    return c.map((val, i) => val - 50*(a%1)*v[i]);
+    return c.map((val, i) => val - 500*(a%1)*v[i]);
   }
 }
 function updCentre(k){
   for(let i = 0;i< chunkContents[k].length;i++){
-    chunkContents[k][i].av = chunkContents[k][i].av+0.005 %4;
+    chunkContents[k][i].av = chunkContents[k][i].av+0.00005 %4;
   }
 }
 function drawStars() {
