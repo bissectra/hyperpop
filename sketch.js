@@ -63,7 +63,7 @@ function draw() {
   updateChunks();
   setupLighting();
   drawStars();
-  drawWorld();
+  //drawWorld();
   drawTarget();
 }
 
