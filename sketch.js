@@ -234,7 +234,7 @@ function drawStars() {
   for (let i = 0; i < 4; i++) rotOnly[i][4] = 0;
   updCentre();
   stars.forEach(({ center, radius, color,vecteur,av }) => {
-    drawSphere(depCentre(center,vecteur,av), radius, color, rotOnly, () => {
+    drawSphere(center, radius, color, rotOnly, () => {
       emissiveMaterial(...color);
     });
   });
