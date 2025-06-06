@@ -108,12 +108,14 @@ function loadChunk(i, j, k, l) {
       random(0, CHUNK_SIZE),
     ];
     const center = chunkOrigin.map((base, idx) => base + localPos[idx]);
-
+    const rcenter = chunkOrigin.map((base, idx) => base + localPos[idx]);
     const idxColor = Math.floor(random(0, RAINBOW_COLORS.length));
     const { color, score } = RAINBOW_COLORS[idxColor];
 
     chunkObjects.push({
       center,
+      rcenter,
+
       radius: 15,
       color,
       score,
@@ -180,7 +182,6 @@ function generateStars(count) {
     const dist = 2000;
     stars.push({
       center: unit.map((v) => v * dist),
-      rcenter : unit.map((v) => v * dist),
       radius: random(8, 18),
       color: [255, 255, 255], // white color
       vecteur : Array.from({ length: 4 }, () => random(-1, 1)),
