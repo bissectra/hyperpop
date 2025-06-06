@@ -235,9 +235,7 @@ function updCentre(k){
   }
 }
 function drawStars() {
-  // Remove translação do modelo: só rotação
   let rotOnly = model.map((row) => row.slice());
-  // Zera a coluna de translação
   for (let i = 0; i < 4; i++) rotOnly[i][4] = 0;
     stars.forEach(({ center, radius, color,vecteur,av }) => {
     drawSphere(center, radius, color, rotOnly, () => {
