@@ -222,7 +222,7 @@ function drawWorld() {
 //oui
 function updCentre(k){
   for(let i = 0;i< chunkContents[k].length;i++){
-    chunkContents[k][i].av = (chunkContents[k][i].av+0.00005) %4;
+    chunkContents[k][i].av = (chunkContents[k][i].av+0.005) %4;
     if(chunkContents[k][i].av<=2){
       chunkContents[k][i].center =  chunkContents[k][i].rcenter.map((val, j) => val + 500*(chunkContents[k][i].av % 1)*chunkContents[k][i].vecteur[j]);
     }
